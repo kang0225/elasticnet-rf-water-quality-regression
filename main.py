@@ -32,3 +32,30 @@ evaluate_model(elastic_model, train_poly, train_target, test_poly, test_target)
 
 print("\nRandom Forest 성능:")
 evaluate_model(rf_model, train_poly, train_target, test_poly, test_target)
+
+# ElasticNet 해석
+coefs = elastic_model.coef_
+feature_names = poly.get_feature_names_out(input_features=train_input.columns)
+
+coef_df = pd.DataFrame({
+    'Feature': feature_names,
+    'Coefficient': coefs,
+    'Abs': np.abs(coefs)
+})
+
+coef_df_sorted = coef_df.sort_values(by='Abs', ascending=False)
+
+print("\nElasticNet 회귀 계수 상위 10개:")
+print(coef_df_sorted[['Feature', 'Coefficient']].head(10))
+
+# Random Forest 해석
+rf_importances = rf_model.feature_importances_
+rf_df = pd.DataFrame({
+    'Feature': feature_names,
+    'Importance': rf_importances
+})
+
+rf_df_sorted = rf_df.sort_values(by='Importance', ascending=False)
+
+print("\nRandom Forest 중요도 상위 10개:")
+print(rf_df_sorted.head(10))
